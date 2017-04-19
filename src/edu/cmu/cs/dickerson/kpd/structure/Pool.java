@@ -33,13 +33,13 @@ public class Pool extends DefaultDirectedWeightedGraph<Vertex, Edge> {
 
 	private SortedSet<VertexPair> pairs;
 	private SortedSet<VertexAltruist> altruists;
-	private Object object_ref;
+	private TreeMap<String, Integer> numberOfBloodType;
 
 	public Pool(Class<? extends Edge> edgeClass) {
 		super(edgeClass);
 		pairs = new TreeSet<VertexPair>();
 		altruists = new TreeSet<VertexAltruist>();
-		object_ref = new Object();
+		numberOfBloodType = new TreeMap<String, Integer> ();
 	}
 
 	@Override
@@ -687,6 +687,54 @@ public class Pool extends DefaultDirectedWeightedGraph<Vertex, Edge> {
 		return edgeExists;
 	}
 
+	public TreeMap<String, Integer> getMap () {
+		return numberOfBloodType;
+	}
+	
+	/* Maps a concatenated blood-type match to number of times it
+	 * occurs in VertexPair and VertexAltruist SortedSets.
+	 */
+	public void createBloodTypeAbstraction() {
+
+		//Map each patient-donor pair to number of it times it occurs in SortedSet.
+		for (VertexPair vp : pairs) {
+			String patientType = vp.getBloodTypePatient().toString();
+			String donorType = vp.getBloodTypeDonor().toString();
+			String concat = patientType + donorType;
+
+			//If pairing doesn't already exist in map, create an entry and map it to 1 occurrence.
+			//Otherwise, update # occurrences.
+			if (!numberOfBloodType.containsKey(concat)) {
+				numberOfBloodType.put(concat, 1);
+			} else {
+				int to_increment = numberOfBloodType.get(concat);
+				numberOfBloodType.put(concat, ++to_increment);
+			}
+		}
+
+		/* 
+		 * Map each X-donor pair to number of it times it occurs in SortedSet.
+		 */
+		for (VertexAltruist va : altruists) {
+			String patientType = "X";
+			String donorType = va.getBloodTypeDonor().toString();
+			String concat = patientType + donorType;
+
+			if (numberOfBloodType.get(concat) == null) {
+				numberOfBloodType.put(concat, 1);
+			} else {
+				int to_increment = numberOfBloodType.get(concat);
+				numberOfBloodType.put(concat, ++to_increment);
+			}
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
 
 	/*public TreeMap<List<BloodType>, Integer> getBloodTypeAbstraction() {
 		// Maps a list of blood types (patient, donor) to number of times it
