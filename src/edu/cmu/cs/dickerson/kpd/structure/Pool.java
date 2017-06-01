@@ -690,11 +690,16 @@ public class Pool extends DefaultDirectedWeightedGraph<Vertex, Edge> {
 	public TreeMap<String, Integer> getMap () {
 		return numberOfBloodType;
 	}
-	
+
 	/* Maps a concatenated blood-type match to number of times it
 	 * occurs in VertexPair and VertexAltruist SortedSets.
 	 */
 	public void createBloodTypeAbstraction() {
+		
+		String [] possible_pairs = new String [] {"OA", "OB", "OO", "OAB", "AA", "AB", "AO", "AAB", "BA", "BB", "BO", "BAB", "ABA", "ABB", "ABO", "ABAB", "XA", "XB", "XO", "XAB"};
+		for (String s : possible_pairs) {
+			numberOfBloodType.put(s, 0);
+		}
 
 		//Map each patient-donor pair to number of it times it occurs in SortedSet.
 		for (VertexPair vp : pairs) {
@@ -702,14 +707,8 @@ public class Pool extends DefaultDirectedWeightedGraph<Vertex, Edge> {
 			String donorType = vp.getBloodTypeDonor().toString();
 			String concat = patientType + donorType;
 
-			//If pairing doesn't already exist in map, create an entry and map it to 1 occurrence.
-			//Otherwise, update # occurrences.
-			if (!numberOfBloodType.containsKey(concat)) {
-				numberOfBloodType.put(concat, 1);
-			} else {
-				int to_increment = numberOfBloodType.get(concat);
-				numberOfBloodType.put(concat, ++to_increment);
-			}
+			int to_increment = numberOfBloodType.get(concat);
+			numberOfBloodType.put(concat, ++to_increment);
 		}
 
 		/* 
@@ -720,21 +719,17 @@ public class Pool extends DefaultDirectedWeightedGraph<Vertex, Edge> {
 			String donorType = va.getBloodTypeDonor().toString();
 			String concat = patientType + donorType;
 
-			if (numberOfBloodType.get(concat) == null) {
-				numberOfBloodType.put(concat, 1);
-			} else {
-				int to_increment = numberOfBloodType.get(concat);
-				numberOfBloodType.put(concat, ++to_increment);
-			}
+			int to_increment = numberOfBloodType.get(concat);
+			numberOfBloodType.put(concat, ++to_increment);
 		}
 	}
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
 
 	/*public TreeMap<List<BloodType>, Integer> getBloodTypeAbstraction() {
 		// Maps a list of blood types (patient, donor) to number of times it
