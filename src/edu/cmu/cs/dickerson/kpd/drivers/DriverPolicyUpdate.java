@@ -1,10 +1,9 @@
 package edu.cmu.cs.dickerson.kpd.drivers;
 
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-
 import java.util.*;
 
 import edu.cmu.cs.dickerson.kpd.solver.CycleFormulationCPLEXSolver;
@@ -300,6 +299,8 @@ public class DriverPolicyUpdate {
 				e.printStackTrace();
 			}
 
+			//System.out.println("TIME FOR A MAX MATCHING");
+			
 			//Conduct max matching to get objective values 
 			Solution optSolIP = null;
 			CycleMembership membership = new CycleMembership(pool, matches);
@@ -310,6 +311,8 @@ public class DriverPolicyUpdate {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
+			//System.out.println("3:        " + optSolIP.getObjectiveValue());
 			
 			if (optSolIP != null) {
 				Double value = optSolIP.getObjectiveValue();
@@ -348,23 +351,30 @@ public class DriverPolicyUpdate {
 	 * Takes array as argument and exports its elements to a CSV
 	 */
 	public static void exportToCsv (double[] array, String filename) {
-		//create a File class object
-		java.io.File weightsCSV = new java.io.File(filename);
-
-		//Create a Printwriter text output stream and link it to the CSV File
-		java.io.PrintWriter outfile = null;
+		FileWriter pw = null;
 		try {
-			outfile = new java.io.PrintWriter(weightsCSV);
-		} catch (FileNotFoundException e1) {
+			pw = new FileWriter(filename, true);
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+			e.printStackTrace();
+		} 
 
 		//Writes each element of array to CSV
 		for (int i = 0; i < array.length; i++) {				
-			outfile.write(String.valueOf(array[i]));
-			outfile.write(",");
+			try {
+				pw.write(String.valueOf(array[i]));
+				pw.write(",");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 		}
-		outfile.close();
+		try {
+			pw.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
